@@ -1,1 +1,3 @@
 - handle plugin activation once rhythmbox is playing
+- stop playback when quitting rhythmbox
+- publish to https://wiki.gnome.org/Apps/Rhythmbox/Plugins/ThirdParty
