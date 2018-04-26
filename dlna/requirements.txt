@@ -1,0 +1,5 @@
+flask
+requests
+xmltodict
+netifaces
+pulsectl

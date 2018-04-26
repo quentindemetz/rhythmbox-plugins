@@ -1,0 +1,9 @@
+[Plugin]
+Loader=python3
+Module=dlna
+IAge=2
+Name=DLNA Plugin
+Description=Play music to your local network's DLNA MediaRenderer
+Authors=quentin@de.me.tz
+Copyright=MIT license
+Website=http://localhost/
