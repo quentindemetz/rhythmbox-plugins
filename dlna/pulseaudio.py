@@ -1,7 +1,6 @@
 # coding: UTF-8
 
 from pulsectl import Pulse, PulseLoopStop
-from queue import Queue, Empty
 from threading import Thread
 
 
@@ -16,7 +15,6 @@ class Pulseaudio(object):
     self.thread.start()
 
   def on_event(self, event_info):
-    print(event_info)
     if event_info.t != 'change' or event_info.facility != 'sink':
       return
     self.has_event = True
