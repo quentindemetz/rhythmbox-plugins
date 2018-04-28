@@ -37,6 +37,7 @@ class DLNAPlugin(GObject.Object, Peas.Activatable):
     self.pulseaudio = Pulseaudio(upnp=self.upnp)
     self.pulseaudio.setup()
     self.sp.set_volume(0)
+    self.current_track_position = None
 
   def do_deactivate(self):
     self.disconnect_signals()
@@ -49,17 +50,26 @@ class DLNAPlugin(GObject.Object, Peas.Activatable):
     del self.sp
     del self.upnp
     del self.pulseaudio
+    del self.current_track_position
 
   def connect_signals(self):
     self.player_cb_ids = (
       self.sp.connect('playing-changed', self.playing_changed_cb),
       self.sp.connect ('playing-song-changed', self.playing_song_changed_cb),
+      self.sp.connect('elapsed-nano-changed', self.elapsed_changed_cb),
     )
 
   def disconnect_signals(self):
     for cb_id in self.player_cb_ids:
       self.sp.disconnect(cb_id)
     del self.player_cb_ids
+
+  def elapsed_changed_cb(self, _player, elapsed):
+    elapsed /= 1000000000
+    if self.current_track_position is not None and abs(elapsed - self.current_track_position) > 1:
+      print('seek detected')
+      self.upnp.seek(elapsed)
+    self.current_track_position = elapsed
 
   def playing_song_changed_cb(self, _player, entry):
     if entry is None:

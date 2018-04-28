@@ -77,6 +77,31 @@ class Payloads(object):
     }
 
   @classmethod
+  def seek(cls, **kwargs):
+    options = {
+      'instance_id': 0,
+      'unit': 'REL_TIME',
+    }
+    options.update(kwargs)
+    return {
+      'headers': {
+        'Content-Type': 'text/xml',
+        'SOAPAction': '"urn:schemas-upnp-org:service:AVTransport:1#Seek"',
+      },
+      'data': """
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+  <s:Body>
+    <u:Seek xmlns:u="urn:schemas-upnp-org:service:AVTransport:1">
+      <InstanceID>{instance_id}</InstanceID>
+      <Unit>{unit}</Unit>
+      <Target>{target}</Target>
+    </u:Seek>
+  </s:Body>
+</s:Envelope>
+""".format(**options).strip().encode(),
+    }
+
+  @classmethod
   def next(cls, **kwargs):
     options = {
       'instance_id': 0
