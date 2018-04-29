@@ -130,7 +130,7 @@ class UPNP(object):
   def seek(self, time_in_seconds):
     target = time(int(time_in_seconds / 3600), int(time_in_seconds % 3600 / 60), int(time_in_seconds % 60), int(1000000 * (time_in_seconds % 1)))
     formatted_target = target.strftime('%H:%M:%S.%f')
-    print('seek')
+    print('seek', time_in_seconds)
     requests.post(self.transport_control_url, **Payloads.seek(target=formatted_target))
 
   def next(self):

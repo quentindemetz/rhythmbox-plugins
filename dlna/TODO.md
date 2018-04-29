@@ -1,0 +1,2 @@
+- publish to https://wiki.gnome.org/Apps/Rhythmbox/Plugins/ThirdParty
+- search for renderers in the background and roam between active renderers

@@ -5,7 +5,7 @@
 - I listen to music with rhythmbox
 - I've plugged in a raspberrypi to my old stereo and installed [gmediarenderer](https://github.com/hzeller/gmrender-resurrect), which provides an [DLNA](https://en.wikipedia.org/wiki/Digital_Living_Network_Alliance) Digital Media Renderer
 - I've been wanting to stream my music to my stereo over wifi (aka airplay in the apple world)
-- I couldn't get [pulseaudio-dlna](https://github.com/masmu/pulseaudio-dlna) to work
+- I couldn't get [pulseaudio-dlna](https://github.com/masmu/pulseaudio-dlna) to work without stuttering.
 
 ## Solution
 This plugin:
@@ -20,4 +20,5 @@ Your Mileage May Vary.
 - copy/symlink the dlna folder inside `~/.local/share/rhythmbox/plugins/` 
 - install dependencies: `pip3 install -r ~/.local/share/rhythmbox/plugins/dlna/requirements.txt`
 - restart rhythmbox and activate the plugin
+- once activated, disable/enable via the menu items in the "Tools" menu bar
 - that's it!
