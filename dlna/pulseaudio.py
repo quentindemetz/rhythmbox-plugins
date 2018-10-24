@@ -1,14 +1,14 @@
 # coding: UTF-8
 
-from pulsectl import Pulse, PulseLoopStop
+from pulsectl import Pulse, PulseLoopStop, PulseDisconnected
 from threading import Thread
 
 
 class Pulseaudio(object):
-  def __init__(self, upnp):
+  def __init__(self, media_renderer):
     self.pulse = Pulse('rhythmbox-dlna')
     self.running = True
-    self.upnp = upnp
+    self.media_renderer = media_renderer
     self.thread = Thread(target=self.loop)
 
   def setup(self):
@@ -19,18 +19,21 @@ class Pulseaudio(object):
       return
     self.has_event = True
     raise PulseLoopStop()
-    
+
   def loop(self):
     self.pulse.event_mask_set('sink')
     self.pulse.event_callback_set(self.on_event)
     while self.running:
       self.has_event = False
-      self.pulse.event_listen(timeout=0.1)
+      try:
+        self.pulse.event_listen(timeout=0.1)
+      except PulseDisconnected:
+        pass
       if self.has_event:
         sink = self.find_running_sink()
         if sink:
           volume = sink.volume.value_flat
-          self.upnp.set_volume_from_pulseaudio(volume)
+          self.media_renderer.set_volume_from_pulseaudio(volume)
 
   def teardown(self):
     self.running = False

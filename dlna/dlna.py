@@ -31,8 +31,7 @@ class DLNAPlugin(GObject.Object, Peas.Activatable):
     self.window = self.shell.props.window
     self.app = self.shell.props.application
 
-    self.upnp = UPNP()
-    self.upnp.setup()
+    self.media_renderer = UPNP().find_renderer()
     self.webservice = Webservice()
     self.webservice.start()
     self.setup_menu_items()
@@ -61,7 +60,7 @@ class DLNAPlugin(GObject.Object, Peas.Activatable):
     self.app.add_plugin_menu_item("tools", "disable-dlna-streaming", item)
 
     self.sp.set_volume(0)
-    self.pulseaudio = Pulseaudio(upnp=self.upnp)
+    self.pulseaudio = Pulseaudio(media_renderer=self.media_renderer)
     self.pulseaudio.setup()
 
     self.playing_song_changed_cb(None, self.sp.get_playing_entry())
@@ -77,21 +76,22 @@ class DLNAPlugin(GObject.Object, Peas.Activatable):
     self.disconnect_signals()
     self.sp.set_volume(1)
     self.pulseaudio.teardown()
-    self.upnp.stop()
+    self.media_renderer.stop_playback()
 
   def do_deactivate(self):
     self.disable_streaming()
     self.teardown_menu_items()
     self.disconnect_signals()
 
-    self.upnp.teardown()
+    self.media_renderer.stop_playback()
     self.webservice.stop()
     self.sp.pause()
 
     self.window.destroy()
     del self.shell
     del self.sp
-    del self.upnp
+    del self.media_renderer
+    del self
     del self.pulseaudio
     del self.current_track_position
     del self.window
@@ -113,7 +113,7 @@ class DLNAPlugin(GObject.Object, Peas.Activatable):
     elapsed /= 1000000000
     if self.current_track_position is not None and abs(elapsed - self.current_track_position) > 1:
       print('seek detected')
-      self.upnp.seek(elapsed)
+      self.media_renderer.seek(elapsed)
     self.current_track_position = elapsed
 
   def playing_song_changed_cb(self, _player, entry):
@@ -121,14 +121,14 @@ class DLNAPlugin(GObject.Object, Peas.Activatable):
       return
     location = entry.get_string(RB.RhythmDBPropType.LOCATION)
     url = self.webservice.url_for_file(location)
-    self.upnp.stop()
-    self.upnp.set_url(url)
-    self.upnp.play()
+    self.media_renderer.stop_playback()
+    self.media_renderer.set_url(url)
+    self.media_renderer.play()
 
   def playing_changed_cb(self, _player, is_playing):
     if (is_playing):
-      self.upnp.play()
+      self.media_renderer.play()
     else:
-      self.upnp.pause()
+      self.media_renderer.pause()
 
 

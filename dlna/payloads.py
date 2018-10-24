@@ -5,7 +5,7 @@ class Payloads(object):
   def set_volume(cls, **kwargs):
     options = {
       'instance_id': 0,
-      'channel': 'master',
+      'channel': 'Master',
     }
     options.update(kwargs)
     return {
@@ -31,7 +31,7 @@ class Payloads(object):
   def set_volume_db(cls, **kwargs):
     options = {
       'instance_id': 0,
-      'channel': 'master',
+      'channel': 'Master',
     }
     options.update(kwargs)
     return {
