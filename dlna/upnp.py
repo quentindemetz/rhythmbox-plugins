@@ -2,6 +2,7 @@
 
 import socket
 import struct
+from threading import Thread
 
 from media_renderer import MediaRenderer
 
@@ -21,8 +22,12 @@ class UPNP(object):
   def __init__(self):
     pass
 
+  def find_renderer_in_bg(self, success_cbs):
+    Thread(target=self.find_renderer, kwargs={'success_cbs': success_cbs}).start()
+
   # https://stackoverflow.com/questions/603852/multicast-in-python
-  def find_renderer(self):
+  def find_renderer(self, success_cbs=[]):
+    print('searching for renderer')
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind((DLNA_GROUP, DLNA_PORT))
@@ -37,7 +42,10 @@ class UPNP(object):
         device = self.parse_search_response(addr, data.decode())
         if device.get('nt') == 'urn:schemas-upnp-org:device:MediaRenderer:1':
           print('renderer found on %s' % (device['location'])) 
-          return MediaRenderer(device)
+          media_renderer = MediaRenderer(device)
+          for cb in success_cbs:
+            cb(media_renderer=media_renderer)
+          return
     except socket.timeout:
       pass
 

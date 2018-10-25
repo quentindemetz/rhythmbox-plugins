@@ -71,3 +71,8 @@ class MediaRenderer(object):
   def stop_playback(self):
     requests.post(self.transport_url, **Payloads.stop())
 
+  def seek_workaround(self, url):
+    self.stop_playback()
+    self.set_url(url)
+    self.play()
+
